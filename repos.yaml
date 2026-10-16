@@ -1,0 +1,27 @@
+# Repos fixbot may work on. `./fixbot.sh sync` clones or updates each one into
+# repos/<name>/. Claude only uses repos listed here.
+#
+# You own this list: add or remove repos here. Claude may fill in the optional
+# fields (setup, run, test, ...) when it works them out, but never adds or
+# removes entries.
+#
+# Format rules (sync reads this without a YAML library):
+#   - every entry starts with "- name:" on its own line
+#   - "repo:" and "branch:" are on their own lines, indented under it
+#   - repo is "owner/name" on GitHub (cloned over SSH: git@github.com:owner/name.git),
+#     or any full clone URL (git@... or https://...)
+#
+# Example:
+#   - name: payments-api                  # folder under repos/
+#     repo: houseworksinc/payments-api    # required
+#     branch: main                        # optional; default: the remote's default branch
+#     sentry_projects: [payments-api]     # Sentry project slugs that map to this repo
+#     path_hints: ["src/payments/"]       # stack-frame path prefixes found in this repo
+#     setup: "docker compose up -d db && npm ci"
+#     run: "npm run dev"
+#     test: "npm test"
+#     test_single: "npx jest {file}"
+#     depends_on: [shared-lib]
+#     notes: "needs REDIS_URL; tests use testcontainers"
+
+services:
