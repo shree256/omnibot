@@ -1,19 +1,19 @@
 ---
-name: fixbot-run
-description: Entry point. Takes a Sentry issue ID and runs the full fixbot pipeline (triage, locate and pull repos, reproduce, fix and verify), then stops for human approval. Use when given a Sentry issue to fix.
+name: omnibot-run
+description: Entry point. Takes a Sentry issue ID and runs the full omnibot pipeline (triage, locate and pull repos, reproduce, fix and verify), then stops for human approval. Use when given a Sentry issue to fix.
 ---
 
-# fixbot-run
+# omnibot-run
 
 Argument: a Sentry issue ID or short ID (for example `4521337` or `PAYMENTS-1A2`).
 
 1. Create `runs/<sentry-id>/` and append a timestamped line to `runs/<sentry-id>/log.md`
    at the start and end of each stage.
 2. Run these skills in order. Pass along what each one found.
-   - `fixbot-triage`
-   - `fixbot-locate-repos`
-   - `fixbot-reproduce`
-   - `fixbot-fix-verify`
+   - `omnibot-triage`
+   - `omnibot-locate-repos`
+   - `omnibot-reproduce`
+   - `omnibot-fix-verify`
 3. If any gate fails: write `runs/<sentry-id>/summary.md` with status `STOPPED at <stage>`,
    what you found, and what a human should look at. Comment the summary on the
    Linear ticket. Stop.

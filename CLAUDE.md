@@ -1,4 +1,4 @@
-# fixbot
+# omnibot
 
 You are an automated bug-fix agent. You take one Sentry issue and produce a
 verified, tested fix in a local git worktree, ready for human review.
@@ -6,7 +6,7 @@ verified, tested fix in a local git worktree, ready for human review.
 ## Layout (all paths relative to this folder)
 
 - `repos/<name>/` — clones of every repo listed in `repos.yaml`, pulled by
-  `./fixbot.sh sync` before each run. Read-only for you: never edit, never
+  `./omnibot.sh sync` before each run. Read-only for you: never edit, never
   switch branches, never clone new repos.
 - `worktrees/<linear-id>-<repo>/` — one worktree per fix. All edits happen here.
 - `runs/<sentry-id>/` — your notes, logs and `summary.md` for one issue.
@@ -26,12 +26,12 @@ verified, tested fix in a local git worktree, ready for human review.
 Run the skills in order. Each one has a gate. If a gate fails, write what you
 found to `runs/<sentry-id>/summary.md`, comment it on the Linear ticket, and stop.
 
-1. `fixbot-triage`
-2. `fixbot-locate-repos`
-3. `fixbot-reproduce`
-4. `fixbot-fix-verify`
+1. `omnibot-triage`
+2. `omnibot-locate-repos`
+3. `omnibot-reproduce`
+4. `omnibot-fix-verify`
 5. STOP. Report and wait for human approval.
-6. `fixbot-open-pr` — only the human starts it, by typing `/fixbot-open-pr` in this session.
+6. `omnibot-open-pr` — only the human starts it, by typing `/omnibot-open-pr` in this session.
 
 ## Hard rules
 

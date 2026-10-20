@@ -1,13 +1,13 @@
 ---
-name: fixbot-reproduce
+name: omnibot-reproduce
 description: Create a worktree per repo, set the repo up locally, and write a failing test or script that reproduces the Sentry error.
 ---
 
-# fixbot-reproduce
+# omnibot-reproduce
 
 ## 1. Create worktrees
 
-For each repo chosen by `fixbot-locate-repos`, with `<id>` = the Linear ID in lower case and `<slug>` = a
+For each repo chosen by `omnibot-locate-repos`, with `<id>` = the Linear ID in lower case and `<slug>` = a
 short kebab-case description:
 
 ```bash

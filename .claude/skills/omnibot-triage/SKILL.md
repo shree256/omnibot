@@ -1,9 +1,9 @@
 ---
-name: fixbot-triage
+name: omnibot-triage
 description: Fetch a Sentry issue through the Sentry MCP, decide whether it is fixable by a code change, and find or create the matching Linear ticket.
 ---
 
-# fixbot-triage
+# omnibot-triage
 
 ## Steps
 

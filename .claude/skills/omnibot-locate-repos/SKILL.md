@@ -1,12 +1,12 @@
 ---
-name: fixbot-locate-repos
-description: Pick which of the repos listed in repos.yaml an error involves. The repos are already pulled into repos/ by fixbot.sh sync; never clone or add repos.
+name: omnibot-locate-repos
+description: Pick which of the repos listed in repos.yaml an error involves. The repos are already pulled into repos/ by omnibot.sh sync; never clone or add repos.
 ---
 
-# fixbot-locate-repos
+# omnibot-locate-repos
 
-`repos.yaml` is the human-maintained list of repos fixbot may work on.
-`./fixbot.sh sync` has already cloned or updated each one into `repos/<name>/`.
+`repos.yaml` is the human-maintained list of repos omnibot may work on.
+`./omnibot.sh sync` has already cloned or updated each one into `repos/<name>/`.
 
 ## 1. Pick repos from the list
 

@@ -1,10 +1,10 @@
 ---
-name: fixbot-open-pr
+name: omnibot-open-pr
 description: After explicit human approval only, commit the fix in each worktree, push the branch, open a draft PR through the GitHub MCP, and link it to the Linear ticket.
 disable-model-invocation: true
 ---
 
-# fixbot-open-pr
+# omnibot-open-pr
 
 Run this only when the human has explicitly approved opening the PR for this
 issue in the current session. If you are not sure, ask.

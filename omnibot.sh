@@ -1,16 +1,18 @@
 #!/bin/zsh
-# fixbot — local Sentry → fix → PR pipeline driven by Claude Code.
+# omnibot — local Sentry → fix → PR pipeline driven by Claude Code.
 #
-#   ./fixbot.sh poll            check Sentry for new issues and run the pipeline (launchd calls this)
-#   ./fixbot.sh run <issue-id>  run the pipeline for one Sentry issue now
-#   ./fixbot.sh review <issue-id>  open the issue's session interactively to review and approve the PR
-#   ./fixbot.sh status          list runs and their status
-#   ./fixbot.sh sync            clone or update every repo listed in repos.yaml into repos/
+#   ./omnibot.sh poll            check Sentry for new issues and run the pipeline (launchd calls this)
+#   ./omnibot.sh run <issue-id>  run the pipeline for one Sentry issue now
+#   ./omnibot.sh review <issue-id>  open the issue's session interactively to review and approve the PR
+#   ./omnibot.sh status          list runs and their status
+#   ./omnibot.sh sync            clone or update every repo listed in repos.yaml into repos/
 set -euo pipefail
 
 FB="${0:A:h}"
 cd "$FB"
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+# The GitHub plugin reads this token. launchd does not load ~/.zshrc, so fetch it from gh.
+export GITHUB_PERSONAL_ACCESS_TOKEN="${GITHUB_PERSONAL_ACCESS_TOKEN:-$(gh auth token 2>/dev/null || true)}"
 
 source ./config.sh
 : "${MAX_TURNS:=80}" "${MAX_ISSUES_PER_POLL:=2}" "${POLL_MODEL:=haiku}"
@@ -38,21 +40,21 @@ sync_repos() {
   local name repo branch url failed=0 listed=0 count=0
   while IFS='|' read -r name repo branch; do
     (( listed++ )) || true
-    if [[ -z "$repo" ]]; then echo "fixbot: '$name' has no repo: line" >&2; failed=1; continue; fi
+    if [[ -z "$repo" ]]; then echo "omnibot: '$name' has no repo: line" >&2; failed=1; continue; fi
     url="$repo"; [[ "$repo" == *://* || "$repo" == git@* ]] || url="git@github.com:$repo.git"
     if [[ -d "repos/$name/.git" ]]; then
       git -C "repos/$name" fetch --prune --quiet origin \
-        && { git -C "repos/$name" pull --ff-only --quiet 2>/dev/null || echo "fixbot: $name fetched (working copy not fast-forwarded)"; } \
-        || { echo "fixbot: fetch failed for $name" >&2; failed=1; continue; }
+        && { git -C "repos/$name" pull --ff-only --quiet 2>/dev/null || echo "omnibot: $name fetched (working copy not fast-forwarded)"; } \
+        || { echo "omnibot: fetch failed for $name" >&2; failed=1; continue; }
     else
       local -a opts=(--quiet); [[ -n "$branch" ]] && opts+=(--branch "$branch")
       git clone "${opts[@]}" "$url" "repos/$name" \
-        || { echo "fixbot: clone failed for $name ($url)" >&2; failed=1; continue; }
+        || { echo "omnibot: clone failed for $name ($url)" >&2; failed=1; continue; }
     fi
     (( count++ )) || true
   done < <(list_repos)
-  (( listed > 0 )) || { echo "fixbot: no repos listed in repos.yaml" >&2; return 1; }
-  echo "fixbot: synced $count of $listed repo(s) into repos/"
+  (( listed > 0 )) || { echo "omnibot: no repos listed in repos.yaml" >&2; return 1; }
+  echo "omnibot: synced $count of $listed repo(s) into repos/"
   return $failed
 }
 
@@ -68,8 +70,8 @@ poll_sentry() {
     > state/poll-last.json 2> state/poll-last.err || true
 
   if ! jq -e '.is_error == false' state/poll-last.json >/dev/null 2>&1; then
-    echo "fixbot: Sentry poll failed (see state/poll-last.*)" >&2
-    notify "fixbot: Sentry poll failed" "Check the Sentry MCP sign-in: claude, then /mcp"
+    echo "omnibot: Sentry poll failed (see state/poll-last.*)" >&2
+    notify "omnibot: Sentry poll failed" "Check the Sentry MCP sign-in: claude, then /mcp"
     return 1
   fi
   jq -r '.result' state/poll-last.json | grep -oE '^[[:space:]]*[0-9]+[[:space:]]*$' | tr -d '[:space:]' | sed '/^$/d' || true
@@ -78,8 +80,8 @@ poll_sentry() {
 run_issue() {
   local id="$1" out="runs/$1"
   mkdir -p "$out"
-  echo "fixbot: starting Sentry issue $id"
-  claude -p "/fixbot-run $id" \
+  echo "omnibot: starting Sentry issue $id"
+  claude -p "/omnibot-run $id" \
     --settings .claude/headless.settings.json \
     --permission-mode acceptEdits \
     --allowedTools "Read,Edit,Write,Grep,Glob,Bash,mcp__sentry,mcp__linear,mcp__plugin_github_github" \
@@ -93,17 +95,17 @@ run_issue() {
   [[ -n "$sid" ]] && echo "$sid" > "$out/session"
 
   if [[ "$result" == *"READY FOR REVIEW"* ]]; then
-    notify "fixbot: ready for review" "Sentry $id — run: ./fixbot.sh review $id"
+    notify "omnibot: ready for review" "Sentry $id — run: ./omnibot.sh review $id"
   else
-    notify "fixbot: stopped" "Sentry $id — see runs/$id/summary.md"
+    notify "omnibot: stopped" "Sentry $id — see runs/$id/summary.md"
   fi
-  echo "fixbot: finished $id → $out"
+  echo "omnibot: finished $id → $out"
 }
 
 case "${1:-}" in
   poll)
     # One poll at a time.
-    mkdir state/lock 2>/dev/null || { echo "fixbot: poll already running"; exit 0; }
+    mkdir state/lock 2>/dev/null || { echo "omnibot: poll already running"; exit 0; }
     trap 'rmdir state/lock' EXIT
 
     ids=$(poll_sentry) || exit 1
@@ -112,7 +114,7 @@ case "${1:-}" in
     for id in ${(f)ids}; do
       grep -qx "$id" state/seen.txt && continue
       (( started >= MAX_ISSUES_PER_POLL )) && break
-      (( started > 0 )) || sync_repos || echo "fixbot: some repos failed to sync; continuing" >&2
+      (( started > 0 )) || sync_repos || echo "omnibot: some repos failed to sync; continuing" >&2
       echo "$id" >> state/seen.txt
       run_issue "$id"
       (( started++ )) || true
@@ -122,7 +124,7 @@ case "${1:-}" in
   run)
     [[ -n "${2:-}" ]] || { echo "usage: $0 run <sentry-issue-id>" >&2; exit 1; }
     grep -qx "$2" state/seen.txt || echo "$2" >> state/seen.txt
-    sync_repos || echo "fixbot: some repos failed to sync; continuing" >&2
+    sync_repos || echo "omnibot: some repos failed to sync; continuing" >&2
     run_issue "$2"
     ;;
 
@@ -131,7 +133,7 @@ case "${1:-}" in
     ;;
 
   review)
-    [[ -f "runs/${2:-}/session" ]] || { echo "fixbot: no session for '${2:-}'" >&2; exit 1; }
+    [[ -f "runs/${2:-}/session" ]] || { echo "omnibot: no session for '${2:-}'" >&2; exit 1; }
     [[ -f "runs/$2/summary.md" ]] && cat "runs/$2/summary.md"
     exec claude --resume "$(cat "runs/$2/session")"
     ;;

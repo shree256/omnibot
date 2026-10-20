@@ -1,9 +1,9 @@
 ---
-name: fixbot-fix-verify
+name: omnibot-fix-verify
 description: Make the minimal fix in the worktree, confirm the reproduction now passes, and run the full test suite.
 ---
 
-# fixbot-fix-verify
+# omnibot-fix-verify
 
 ## 1. Fix
 
@@ -13,7 +13,7 @@ description: Make the minimal fix in the worktree, confirm the reproduction now 
   really is the correct behaviour. Explain the choice in the summary.
 - Follow the repo's own conventions, and any `CLAUDE.md`, `AGENTS.md` or
   `.claude/skills/` in that repo.
-- Keep the reproduction test from `fixbot-reproduce` as a regression test.
+- Keep the reproduction test from `omnibot-reproduce` as a regression test.
 
 ## 2. Verify
 

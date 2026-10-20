@@ -1,4 +1,4 @@
-# Repos fixbot may work on. `./fixbot.sh sync` clones or updates each one into
+# Repos omnibot may work on. `./omnibot.sh sync` clones or updates each one into
 # repos/<name>/. Claude only uses repos listed here.
 #
 # You own this list: add or remove repos here. Claude may fill in the optional
