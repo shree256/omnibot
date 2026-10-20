@@ -62,7 +62,7 @@ poll_sentry() {
     --model "$POLL_MODEL" \
     --settings .claude/headless.settings.json \
     --allowedTools "mcp__sentry" \
-    --disallowedTools "Bash,Edit,Write,mcp__linear,mcp__github" \
+    --disallowedTools "Bash,Edit,Write,mcp__linear,mcp__plugin_github_github" \
     --max-turns 6 \
     --output-format json \
     > state/poll-last.json 2> state/poll-last.err || true
@@ -82,7 +82,7 @@ run_issue() {
   claude -p "/fixbot-run $id" \
     --settings .claude/headless.settings.json \
     --permission-mode acceptEdits \
-    --allowedTools "Read,Edit,Write,Grep,Glob,Bash,mcp__sentry,mcp__linear,mcp__github" \
+    --allowedTools "Read,Edit,Write,Grep,Glob,Bash,mcp__sentry,mcp__linear,mcp__plugin_github_github" \
     --max-turns "$MAX_TURNS" \
     --output-format json \
     > "$out/result.json" 2> "$out/stderr.log" || true
