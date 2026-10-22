@@ -37,9 +37,14 @@ found to `runs/<sentry-id>/summary.md`, comment it on the Linear ticket, and sto
 
 - NEVER `git commit`, `git push`, or create a pull request (by git, Bash or
   GitHub MCP) without explicit human approval for that specific action in
-  this session. Approval for one issue does not carry over to another.
+  this session. This applies everywhere: this omnibot repo, every worktree,
+  every repo under `repos/`, and any remote, inside or outside the pipeline.
+  Leave changes uncommitted, report what changed, and ask first. Approval for
+  one commit, push or issue does not carry over to the next.
 - Never push to or edit a default branch (`main`, `master`, `develop`).
 - Never merge a PR.
+- Name every PR, branch and commit in a repo under this folder with the
+  `omnibot-pr-naming` skill, including PRs created outside the pipeline.
 - Never edit `repos/` clones directly; use worktrees.
 - Work only on repos listed in `repos.yaml`. If a fix needs an unlisted repo,
   stop and report which repo to add.

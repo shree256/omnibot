@@ -25,3 +25,15 @@
 #     notes: "needs REDIS_URL; tests use testcontainers"
 
 services:
+  - name: emr_api
+    repo: houseworksinc/emr-api
+    branch: main
+  - name: common_product_brain
+    repo: houseworksinc/common-product-brain
+    branch: main
+  - name: arca_product_brain
+    repo: houseworksinc/arca-product-brain
+    branch: main
+  - name: emr_web_v2
+    repo: houseworksinc/emr-web-v2
+    branch: main

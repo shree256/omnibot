@@ -1,0 +1,5 @@
+# Generated per machine by omnibot.sh; never commit.
+repos/
+worktrees/
+runs/
+state/
