@@ -12,10 +12,11 @@ short kebab-case description:
 
 ```bash
 git -C repos/<repo> worktree add ../../worktrees/<id>-<repo> \
-  -b <id>-fix-<slug> origin/<branch>
+  -b fix/<id>-<slug> origin/<branch>
 ```
 
-If the branch or worktree already exists from an earlier run, reuse it.
+The branch name follows `omnibot-pr-naming`. If the branch or worktree already
+exists from an earlier run, reuse it.
 
 ## 2. Set up
 
