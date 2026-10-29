@@ -1,4 +1,4 @@
-# fixbot
+# omnibot
 
 Local, portable pipeline: Sentry error → Claude picks the affected repos from your list →
 reproduces → fixes → runs tests → **you review** → draft PR linked to Linear.
@@ -7,21 +7,27 @@ Everything lives in this folder. Copy it anywhere.
 
 ## Setup on a new machine
 
-No secrets live in this folder. Sentry, Linear and GitHub sign in through MCP,
-and git uses your SSH key.
+No secrets live in this folder. Sentry and Linear sign in through MCP, GitHub
+uses your `gh` login, and git uses your SSH key.
 
-1. Install `claude`, `git`, `jq` (plus Docker if your repos need it).
+1. Install `claude`, `git`, `jq`, `gh` (plus Docker if your repos need it).
 2. Make sure `ssh -T git@github.com` greets you (git clones and pushes over SSH).
-3. Sign in to the MCP servers once: run `claude` in this folder, then `/mcp`,
-   and authenticate `sentry`, `linear` and `github`.
-4. Edit `config.sh` (Sentry org, search, poll interval).
-5. List your repos in `repos.yaml`, then `./fixbot.sh sync` to pull them into `repos/`.
-6. Try one issue by hand: `./fixbot.sh run <sentry-issue-id>`
-7. Turn on polling: `./install.sh` (remove with `./install.sh --uninstall`).
+3. GitHub: run `gh auth login`. The GitHub MCP comes from the
+   `github@claude-plugins-official` plugin (enabled in `.claude/settings.json`),
+   which reads `GITHUB_PERSONAL_ACCESS_TOKEN`. Add this to `~/.zshrc`:
+   `export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"`.
+   `omnibot.sh` sets it from `gh` on its own, so launchd runs work without it.
+4. Sign in to the other MCP servers once: open a new terminal, run `claude` in
+   this folder, then `/mcp`, authenticate `sentry` and `linear`, and check that
+   `github` shows as connected.
+5. Edit `config.sh` (Sentry org, search, poll interval).
+6. List your repos in `repos.yaml`, then `./omnibot.sh sync` to pull them into `repos/`.
+7. Try one issue by hand: `./omnibot.sh run <sentry-issue-id>`
+8. Turn on polling: `./install.sh` (remove with `./install.sh --uninstall`).
 
 ## How polling works
 
-Every `POLL_INTERVAL` seconds, launchd runs `./fixbot.sh poll`. It asks Claude
+Every `POLL_INTERVAL` seconds, launchd runs `./omnibot.sh poll`. It asks Claude
 (`POLL_MODEL`, Sentry MCP only) for issues matching `SENTRY_QUERY`, skips IDs in
 `state/seen.txt`, syncs the repos, and runs the pipeline for up to
 `MAX_ISSUES_PER_POLL` new issues. If the Sentry sign-in expires, you get a
@@ -31,10 +37,10 @@ notification; run `claude` here and `/mcp` to sign in again.
 
 | Command | What it does |
 |---|---|
-| `./fixbot.sh status` | List runs and where each one stopped |
-| `./fixbot.sh review <id>` | Show the summary and resume that Claude session. Look at the diff in `worktrees/`, ask for changes, then type `/fixbot-open-pr` to approve. Claude still asks before each commit, push and PR. |
-| `./fixbot.sh run <id>` | Sync repos, then run one issue now |
-| `./fixbot.sh sync` | Clone or update every repo in `repos.yaml` into `repos/` (also runs automatically before each pipeline run) |
+| `./omnibot.sh status` | List runs and where each one stopped |
+| `./omnibot.sh review <id>` | Show the summary and resume that Claude session. Look at the diff in `worktrees/`, ask for changes, then type `/omnibot-open-pr` to approve. Claude still asks before each commit, push and PR. |
+| `./omnibot.sh run <id>` | Sync repos, then run one issue now |
+| `./omnibot.sh sync` | Clone or update every repo in `repos.yaml` into `repos/` (also runs automatically before each pipeline run) |
 
 ## How it decides what is allowed
 

@@ -1,4 +1,4 @@
-# Repos fixbot may work on. `./fixbot.sh sync` clones or updates each one into
+# Repos omnibot may work on. `./omnibot.sh sync` clones or updates each one into
 # repos/<name>/. Claude only uses repos listed here.
 #
 # You own this list: add or remove repos here. Claude may fill in the optional
@@ -25,3 +25,15 @@
 #     notes: "needs REDIS_URL; tests use testcontainers"
 
 services:
+  - name: emr_api
+    repo: houseworksinc/emr-api
+    branch: main
+  - name: common_product_brain
+    repo: houseworksinc/common-product-brain
+    branch: main
+  - name: arca_product_brain
+    repo: houseworksinc/arca-product-brain
+    branch: main
+  - name: emr_web_v2
+    repo: houseworksinc/emr-web-v2
+    branch: main

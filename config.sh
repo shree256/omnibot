@@ -1,5 +1,5 @@
-# fixbot settings. No secrets here: Sentry, Linear and GitHub are signed in
-# through /mcp, and git uses your SSH key. This file travels with the folder.
+# omnibot settings. No secrets here: Sentry and Linear are signed in through
+# /mcp, GitHub uses your gh login, and git uses your SSH key. This file travels with the folder.
 
 # Sentry organization slug and the search for issues worth fixing
 # (Sentry search syntax).

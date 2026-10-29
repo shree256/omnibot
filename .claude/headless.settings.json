@@ -4,9 +4,9 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(gh pr create:*)",
-      "mcp__github__create_pull_request",
-      "mcp__github__push_files",
-      "mcp__github__create_or_update_file"
+      "mcp__plugin_github_github__create_pull_request",
+      "mcp__plugin_github_github__push_files",
+      "mcp__plugin_github_github__create_or_update_file"
     ]
   }
 }
